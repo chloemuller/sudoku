@@ -4,11 +4,11 @@ Description du projet : L'objectif de ce projet est de construire une applicatio
 
 ## authors
 
-Muller Chloé
-Dang-Nhu Barthélémy
-Basler Tristan
-Korchia Raphael
-Sasson Charlotte
+Muller Chloé, 
+Dang-Nhu Barthélémy,
+Basler Tristan,
+Korchia Raphael,
+Sasson Charlotte,
 Carril Thomas
 
 
