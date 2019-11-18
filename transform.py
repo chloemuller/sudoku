@@ -34,7 +34,7 @@ def order_points(corners):
     if pts[3][1]>top_right[1]:
         top_right=pts[3]
         bottom_right=pts[2]
-    return [top_left, top_right, bottom_right, bottom_left]
+    return [list(top_left), list(top_right), list(bottom_right), list(bottom_left)]
 
 #the transform should be applied on the original image with the corners
 
