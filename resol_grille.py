@@ -5,9 +5,9 @@ def est_dans_carre(i,j,x,grille):
     indi=i//3
     indj=j//3
     res=False
-    for k in range(indi,indi+3):
-        for l in range(indj,indj+3):
-            if grille[i,j]==x:
+    for k in range(3*indi,3*indi+3):
+        for l in range(3*indj,3*indj+3):
+            if grille[k,l]==x:
                 res=True
     return res
 
