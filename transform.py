@@ -34,14 +34,14 @@ def order_points(corners):
     if pts[3][1]>top_right[1]:
         top_right=pts[3]
         bottom_right=pts[2]
-    return [list(top_left), list(top_right), list(bottom_right), list(bottom_left)]
+    return [ list(bottom_left), list(bottom_right), list(top_right), list(top_left)]
 
 #the transform should be applied on the original image with the corners
 
 def four_point_transform(img, corners):
     rect = order_points(corners)
     rect=np.array(rect, dtype= "float32")
-    (tl, tr, br, bl) = rect
+    (bl, br, tr, tl) = rect
     widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
     widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
     heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
