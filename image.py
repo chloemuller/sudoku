@@ -1,5 +1,7 @@
-# img : fichier array avec 0=blanc 1=noir
-img_test= [[0,0,0,1],[0,1,0,1],[1,1,0,0],[0,1,0,0]]
+# img : fichier array avec 255=blanc 0=noir
+import cv2
+
+img_test=cv2.imread("3.png", 0)
 
 def coordonnees_voisines(liste_points):
     voisins=[]
@@ -24,8 +26,7 @@ def amas_pixels_blancs(img):
             if pixel not in pixels_explores:
                 x=pixel[0]
                 y=pixel[1]
-                print("pixel_courant",pixel)
-                if img[x][y]==1:
+                if img[x][y]==0:
                     pixels_explores.append((x,y))
                 else:
                     amas1=[] 
@@ -35,17 +36,16 @@ def amas_pixels_blancs(img):
                     while front!=[]:
                         for (i,j) in front:
                             if (i,j) not in pixels_explores and (i,j) in pixels:
-                                if img[i][j]==0:
+                                if img[i][j]==255:
                                     amas1.append((i,j))
                                     pixels_explores.append((i,j))
                             voisins=coordonnees_voisines(front)
                             front2=[]
                             for couple in voisins:
                                 (a,b)=couple
-                                if couple not in pixels_explores and couple in pixels and img[a][b]==0:
+                                if couple not in pixels_explores and couple in pixels and img[a][b]==255:
                                     front2.append(couple)
                             front=front2.copy()
-                        print("frontiere", front, front!=[])
                     amas.append(amas1)
     return amas
 

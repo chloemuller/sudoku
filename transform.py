@@ -52,9 +52,3 @@ def four_point_transform(img, corners):
     warped_img = cv2.warpPerspective(img, matrix ,(grid_size, grid_size))
     return warped_img
 
-
-cv2.namedWindow("display")
-
-cv2.imshow("display",four_point_transform(img_test,[[156,5],[7,300],[16,128],[168, 144]]))
-
-cv2.waitKey(0)
