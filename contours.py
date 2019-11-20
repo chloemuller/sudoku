@@ -24,8 +24,12 @@ cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
 cadre=cnts[0]
 
 # on ne cheche que les quatres coins on fai donc des approximations pour les trouver ( négligeant les courbures)
-peri = cv2.arcLength(cadre, True)
-approx = cv2.approxPolyDP(cadre, 0.015 * peri, True)
+approx=cadre
+while len(approx)>4:
+    peri = cv2.arcLength(cadre, True)   #calcul du périmètre du cadre trouvé
+    approx = cv2.approxPolyDP(approx, 0.015 * peri, True) #approximation des polygone(le cadre du sudoku) avec un autre polygone plus simple (moins de côté) avec un epsilon de 0.015*perimètre ce qui permet d'obtenir un polygone à quatre côté.
+
+
 
 # la liste des coins est mise au bon format
 
