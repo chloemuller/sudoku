@@ -1,8 +1,10 @@
 from tkinter import *
 from tkinter.filedialog import *
 
+image=""
+
 def recherche_fichiers():
-    askopenfilename(filetypes=[("PNG","*.png")], title="Choisissez votre fichier")
+    image = askopenfilename(filetypes=[("PNG","*.png")], title="Choisissez votre fichier")
 
 def tk_interface():
     window=Tk()
@@ -19,5 +21,6 @@ def tk_interface():
     bouton_choix2.pack()
 
     window.mainloop()
+    print(image)
 
 tk_interface()
