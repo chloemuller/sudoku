@@ -81,6 +81,11 @@ def transform_to_bw (image_gris):
 
 
 
+
+
+#####Barth
+P=0,50
+
 def greyToBin (t) : #tableau de nuance de gris -> tableau de 0/1
 
     X=len(t)
@@ -183,4 +188,5 @@ def image_bw (image):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-image_bw (fichier)
+#image_bw (fichier)
+
