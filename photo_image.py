@@ -167,15 +167,20 @@ def image_grey (image):
 
 #image_grey("Images/sudo.jpg")
 
-Avg=[200,215,220]
 
-def image_bw (image,avg):
+
+def image_bw (image):
+    moyenne=0
     img=cv2.imread(image)
     grey=cv2.imread(image,cv2.IMREAD_GRAYSCALE)
-    moyenne = avg
+    for i in range (len(grey)):
+        for j in range(len(grey[0])):
+            moyenne+=grey[i][j]
+    moyenne = moyenne//(len(grey)*len(grey[0]))
     maxValue = 255
     ok, thr = cv2.threshold(grey, moyenne, maxValue, cv2.THRESH_BINARY)
     cv2.imshow("BW Image", thr)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+image_bw (fichier)
