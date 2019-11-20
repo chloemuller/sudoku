@@ -1,10 +1,13 @@
 import cv2
 import copy
 from transform import *
+from imgToBin import *
 
 
 def corners_sudoku(image):
     # utilisation de la fonction findcontours
+    original=image.copy()
+    image=greyToBin(pngToGrey(image))
     cnts = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if len(cnts)==2:
         cnts=cnts[0]
@@ -22,8 +25,10 @@ def corners_sudoku(image):
     corners=[]
     for c in approx:
         corners.append(list(c[0]))    
-    return corners
+    return original, corners
 
 def get_clean_grid(image):
-    warped=four_point_transform(image,corners_sudoku(image))
+    original, corners=corners_sudoku(image)
+    warped=four_point_transform(original,corners)
     return warped
+
