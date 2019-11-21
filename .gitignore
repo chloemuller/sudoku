@@ -1,0 +1,4 @@
+*.bmp
+*.png
+identifier_contour.py
+bath_imgToBin.py
