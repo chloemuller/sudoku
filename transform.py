@@ -2,8 +2,6 @@
 import numpy as np
 import cv2
 
-img_test=cv2.imread("imagetest.jpg", 0)
-
 
 #points order: top-left,top-right, bottom-right, bottom-left
 #corners come from the transformed black and white image
