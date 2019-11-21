@@ -1,6 +1,6 @@
 # Sudoku
 
-Description du projet : L'objectif de ce projet est de construire une application permettant de scanner un sudoku ou un jeu équivalent comme par exemple Hidato, de reconstruire la grille associée et d'en proposer une résolution.
+Description du projet : L'objectif de ce projet est de construire une application permettant de scanner un sudoku de reconstruire la grille associée et d'en proposer une résolution.
 
 ## authors
 
@@ -27,5 +27,6 @@ Carril Thomas.
 
 ### autres fonctionnalités
 
-* interface permettant de lancer l'appareil photo et de prendre en photo le sudoku
+* interface permettant de lancer l'appareil photo et de prendre en photo le sudoku ou de la sélectionner dans l'explorateur de fichiers
 * interface permettant de modifier les chiffres scannés en cas d'erreur
+* option indice qui ne renvoie qu'un nouveau chiffre et pas toute la grille corrigée
