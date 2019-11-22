@@ -47,6 +47,6 @@ pour éxecuter ce programme il faut télécharger certain modules :
 
 * opencv-python
 * tensorflow
-*
+* tkinter 
 
 si ce n'est pas suffisant installer les modules du fichier requirements.txt (il contient beaucoup de modules inutiles à ce programme)
