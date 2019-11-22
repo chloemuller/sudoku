@@ -33,10 +33,10 @@ def affich_2(grille_rem,grille_init):
         for j in range(9):
             if grille_init[i][j]!=0:
                 color="black"
-                texte=str(grille_init[i][j])
+                texte=str(int(grille_init[i][j]))
             else:
                 color="blue"
-                texte=str(grille_rem[i][j])
+                texte=str(int(grille_rem[i][j]))
             can.create_text(50+j*50,50+i*50,text=texte,font=("Arial","16"),fill=color)
     can.pack()
     fenetre.mainloop()
