@@ -6,11 +6,13 @@ import time
 import pygame
 boucle=True
 
+
 image="test"
+
 
 def recherche_fichiers():
     global image #important
-    image = askopenfilename(filetypes=[("PNG","*.png")], title="Choisissez votre fichier")
+    image = askopenfilename(filetypes=[("PNG","*.png"),("JPG","*.jpg"),("JPEG","*.jpeg")], title="Choisissez votre fichier")
 
 
 def photo_prise():
@@ -83,10 +85,10 @@ def tk_interface():
     label.pack()
 
     bouton_choix1 = Button(window, text="Je souhaite télécharger ma photo", activebackground="grey", command=recherche_fichiers)
-    bouton_choix2 = Button(window, text="Je souhaite prendre une photo avec la webcam", command=window.quit)
+    bouton_choix2 = Button(window, text="Je souhaite prendre une photo avec la webcam", command=prendre_photo)
     bouton_choix1.pack()
     bouton_choix2.pack()
 
     window.mainloop()
 
-prendre_photo()
+tk_interface()
