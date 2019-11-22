@@ -9,8 +9,6 @@ def decoupage(nom_image, grey = True):
     """fonction qui renvoie une liste d'images de chaque case"""
     im = cv2.imread(nom_image)
     im = get_clean_grid(im)
-    cv2.namedWindow('window')
-    cv2.imshow('window', im)
     if grey :
         grey = pngToGrey(im)
         im = greyToBin(grey)
