@@ -4,6 +4,7 @@ import time
 import numpy
 import tkinter as tk
 import numpy
+from affichage_grille import *
 
 #variable global
 grille=numpy.zeros((9,9))
@@ -237,5 +238,59 @@ def remplie():
     fenetre.destroy()
     return grille
 
+def traiter_grille(gril):
+    global fenetre,can,grille
+    grille=numpy.copy(gril)
+    for i in range(4):
+        can.create_line(25+i*150,25,25+i*150,475,width=5)
+        can.create_line(25,25+i*150,475,25+i*150,width=5)
+    for i in range(6):
+        can.create_line(75+i*50+(i//2)*50,25,75+i*50+(i//2)*50,475,width=2)
+        can.create_line(25,75+i*50+(i//2)*50,475,75+i*50+(i//2)*50,width=2)
+        for i in range(9):
+            for j in range(9):
+                if grille[i][j]!=0:
+                    color="black"
+                    texte=str(int(grille[i][j]))
+                else:
+                    color="black"
+                    texte=' '
+                can.create_text(50+j*50,50+i*50,text=texte,font=("Arial","16"),fill=color)
+    can.grid(row=0,column=0,columnspan=10)
+    button1 = tk.Button(fenetre,
+                   text="Valider la grille",
+                   activebackground = "blue",
+                   fg="red",
+                   command=resoud_grille_valide)
+    #button1.pack(side=tk.LEFT)
+    button1.grid(row=1,column=0,columnspan=3)
+    button2 = tk.Button(fenetre,
+                   text="Corriger la grille",
+                   activebackground = "blue",
+                   fg="red",
+                   command=corriger_grille)
+    #button2.pack(side=tk.LEFT)
+    button2.grid(row=1,column=3,columnspan=3)
+    button3 = tk.Button(fenetre,
+                   text="Remplir la grille",
+                   activebackground = "blue",
+                   fg="red",
+                   command=remplir_la_grille)
+    #button3.pack(side=tk.LEFT)
+    button3.grid(row=1,column=6,columnspan=3)
+    fenetre.mainloop()
+    return grille
 
-remplir_grille([],0)
+def resoud_grille_valide () :
+    return grille
+
+def corriger_grille ():
+    global grille
+    grid=remplir_grille(grille,1)
+    grille=numpy.copy(grid)
+
+def remplir_la_grille ():
+    global grille
+    grid=remplir_grille(grille,0)
+    grille=numpy.copy(grid)
+

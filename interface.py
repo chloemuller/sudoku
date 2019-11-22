@@ -1,16 +1,15 @@
-from tkinter import *
+import tkinter as tk
 from tkinter.filedialog import *
 import numpy as np
 from cv2 import cv2
 import time
-# import pygame
 import time
 import numpy
 from copy import deepcopy
-from affichage_grille import *
-from contours import *
 from image_to_bin import *
 from image_to_grid import *
+from contours import *
+from affichage_grille import *
 from remplir_grille1 import *
 from resol_grille import *
 from resolution_backtracking import *
@@ -19,44 +18,11 @@ from transform import *
 image="test"
 
 def recherche_fichiers():
-    global image
     image = askopenfilename(filetypes=[("PNG","*.png"),("JPG","*.jpg")], title="Choisissez votre fichier")
-    fenetre=Tk()
-    can=Canvas(fenetre,width=500,height=500,bg='white')
     grille=picture_to_grid(image)
-    affich_1(grille,fenetre,can)
-    bouton_valider=Button(fenetre,
-                   text="Valider la grille",
-                   activebackground = "blue",
-                   fg="red",
-                   command=resoud_grille_valide)
-    bouton_valider.grid(row=1,column=0,columnspan=3)
-    bouton_corriger=Button(fenetre,
-                   text="Corriger la grille",
-                   activebackground = "blue",
-                   fg="red",
-                   command=corriger_grille)
-    bouton_corriger.grid(row=1,column=3,columnspan=3)
-    bouton_remplir=Button(fenetre,
-                   text="Remplir la grille",
-                   activebackground = "blue",
-                   fg="red",
-                   command=remplir_la_grille)
-    bouton_valider.grid(row=1,column=6,columnspan=3)
-    def resoud_grille_valide () :
-        grille_reso=resol(grille)
-        fenetre.destroy()
-        affich_2(grille_reso,grille)
-    def corriger_grille ():
-        grille=remplir_grille(grille,1)
-        fenetre.destroy()
-        grille_reso=resol(grille)
-        affich_2(grille_reso,grille)
-    def remplir_la_grille ():
-        grille=remplir_grille(grille,0)
-        fenetre.destroy()
-        grille_reso=resol(grille)
-        affich_2(grille_reso,grille)
+    grid=traiter_grille(grille)
+    grid_reso=resol(grid)
+    affich_2(grid_reso,grid)
 
 
 
@@ -112,7 +78,7 @@ def prendre_photo2():
         ret,frame = cap.read()
         cv2.imshow('img1',frame) #display the captured image
         if cv2.waitKey(1) :
-            cv2.imwrite('C:/Users/thoma/Desktop/sudoku/grille.png',frame) #changer le chemin
+            cv2.imwrite('C:/Users/trisr/sudoku/grille.png',frame) #changer le chemin
             cv2.destroyAllWindows()
             break
         if cv2.getWindowProperty("frame", 1) == -1:
@@ -120,7 +86,7 @@ def prendre_photo2():
     cap.release()
     time.sleep(0.1)
     cv2.destroyAllWindows()
-    return ('C:/Users/thoma/Desktop/sudoku/grille.png')
+    return ('C:/Users/trisr/sudoku/grille.png')
 
 
 def tk_interface():
@@ -140,42 +106,11 @@ def tk_interface():
 
 def prendre_scan():
     nom=prendre_photo2()
-    fenetre=Tk()
-    can=Canvas(fenetre,width=500,height=500,bg='white')
-    grille=picture_to_grid(nom)
-    affich_1(grille,fenetre,can)
-    bouton_valider=Button(fenetre,
-                   text="Valider la grille",
-                   activebackground = "blue",
-                   fg="red",
-                   command=resoud_grille_valide)
-    bouton_valider.grid(row=1,column=0,columnspan=3)
-    bouton_corriger=Button(fenetre,
-                   text="Corriger la grille",
-                   activebackground = "blue",
-                   fg="red",
-                   command=corriger_grille)
-    bouton_corriger.grid(row=1,column=3,columnspan=3)
-    bouton_remplir=Button(fenetre,
-                   text="Remplir la grille",
-                   activebackground = "blue",
-                   fg="red",
-                   command=remplir_la_grille)
-    bouton_valider.grid(row=1,column=6,columnspan=3)
-    def resoud_grille_valide () :
-        grille_reso=resol(grille)
-        fenetre.destroy()
-        affich_2(grille_reso,grille)
-    def corriger_grille ():
-        grille=remplir_grille(grille,1)
-        fenetre.destroy()
-        grille_reso=resol(grille)
-        affich_2(grille_reso,grille)
-    def remplir_la_grille ():
-        grille=remplir_grille(grille,0)
-        fenetre.destroy()
-        grille_reso=resol(grille)
-        affich_2(grille_reso,grille)
+    image=cv2.imread(nom)
+    grille=picture_to_grid(image)
+    grille,grille_reso=traiter_grille(grille)
+    affich_2(grille_reso,grille)
+
 
 def remplir_la_grille():
     mat = numpy.zeros((9,9))
