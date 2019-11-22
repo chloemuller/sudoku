@@ -32,4 +32,21 @@ Carril Thomas.
 
 ## éxecution du programme
 
-pour éxecuter le programme éxecuter le fichier interface.py
+* pour éxecuter le programme éxecuter le fichier interface.py
+* dans la fenêtre resolveur sudoku choisir son mode de chargement du sudoku (explorateur de fichier/ appareil photo/ remplissage manuel)
+* attendre que le programme lise la grille
+* verifier que la grille lue par le programme correspond bien au sudoku utilisé
+* * si oui cliquer sur grille remplie et fermer la fenêtre resolveur sudoku
+* * sinon cliquer sur corriger grille, modifier les cases à modifier en cliquant dessus et en utilisant les boutons sous la grille
+puis cliquer sur grille remplie et fermer la fenetre sudoku resolve
+* votre sudoku résolu s'affiche !
+
+## modules necessaire
+
+pour éxecuter ce programme il faut télécharger certain modules :
+
+* opencv-python
+* tensorflow
+*
+
+si ce n'est pas suffisant installer les modules du fichier requirements.txt (il contient beaucoup de modules inutiles à ce programme)
