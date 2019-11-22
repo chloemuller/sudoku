@@ -1,4 +1,5 @@
 *.bmp
 *.png
 identifier_contour.py
-bath_imgToBin.py
+barth_imgToBin.py
+test.py

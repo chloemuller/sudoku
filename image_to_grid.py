@@ -1,194 +1,49 @@
-from PIL import Image
-import numpy as np
-import matplotlib.pyplot as plt
-
-P=1./50 #portion de l'image totale pour calculer la moyenne locale
-
-def pngToGrey (fichier) : #à partir du nom de fichier renvoie un tableau de nuance de gris
-    imgpil = Image.open(fichier)
-    img = np.array(imgpil)
-    t=[]
-    for x in img :
-        t.append ([])
-        for y in x :
-            s=int(y[0])+int(y[1])+int(y[2])
-            t[-1].append (s/3)
-    return t
-
-def showGrey (t) : #afficher un tableau de nuance de gris
-    tbis=[]
-    for x in t :
-        tbis.append ([])
-        for y in x :
-            tbis[-1].append ([y,y,y])
-    plt.imshow(tbis)
-    plt.show()
-
-def greyToBin (t) : #tableau de nuance de gris -> tableau de 0/1
-
-    X=len(t)
-    Y=len(t[0])
-        #On cherche S un tableau de triplet (s,x,y) avec
-            #s la somme des nuances de gris dans un rectangle 2PX/2PY autour du pixel
-            #x la largeur de la zone (différente vers les bords)
-            #y la hauteur de la zone (différente vers les bords)
-    s=0
-    for i in range (int(P*X)) :
-        for j in range (int (P*Y)) :
-            s+=int(t[i][j])
-
-    S=[]
-    for x in range (X) :
-        S.append ([[]]*Y)
-
-    S[0][0]=[s,int(P*X),int (P*Y)]
-
-    for y in range(1,Y) :
-        S[0][y]=S[0][y-1][:]
-        if (y-1)-(int(P*Y)-1)>=0 :
-            for x in range (int(P*X)) :
-                S[0][y][0]-=t[x][y-int(P*Y)]
-            S[0][y][2]-=1
-        if y+int(P*Y)-1<Y :
-            for x in range (int(P*X)) :
-                S[0][y][0]+=t[x][y+int(P*Y)-1]
-            S[0][y][2]+=1
-
-    for y in range (Y) :
-        for x in range (1,X) :
-            S[x][y]=S[x-1][y][:]
-            if (x-1)-(int(P*X)-1)>=0 :
-                for j in range (max(0,y-int(P*Y)),min(Y,y+int(P*Y))) :
-                    S[x][y][0]-=t[x-int(P*X)][j]
-                S[x][y][1]-=1
-            if x+int(P*X)-1<X :
-                for j in range (max(0,y-int(P*Y)),min(Y,y+int(P*Y))) :
-                    S[x][y][0]+=t[x+int(P*X)-1][j]
-                S[x][y][1]+=1
-
-        #On en déduit M le tableau des moyennes locales de gris
-
-    M=[]
-    for x in S :
-        M.append ([])
-        for y in x :
-            M[-1].append(y[0]//(y[1]*y[2]))
-
-        #On en déduit tbis le tableau binaire gris>moyenne locale
-
-    tbis=[]
-    for x in range (X) :
-        tbis.append([])
-        for y in range (Y) :
-
-            if t[x][y]<M[x][y] :
-                tbis[-1].append(0)
-            else :
-                tbis[-1].append(1)
-
-    return tbis
-
-def showBin (t) : #afficher talbeau de 0/1
-    tbis=[]
-
-    for x in t :
-        tbis.append ([])
-        for y in x :
-            if y==0 :
-                tbis[-1].append ([255,255,255])
-            else :
-                tbis[-1].append ([0,0,0])
-    plt.imshow(tbis)
-    plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-from digit_recognition import *
 import cv2
 from pylab import imread, imshow, show
-from copy import deepcopy
-from numpy import *
+from numpy import array, zeros
+from keras.models import load_model
+from image_to_bin import pngToGrey, greyToBin
+from contours import get_clean_grid
 
 
-#pip install digit-recognition
-
-def bitmap_to_usable(nom_image):
-    #fonctionne seulement pour une image en bitmap (donc ça c'est juste une fonction pour tester)
-    imor = imread(nom_image)
-    print(imor)
-    im = [[0 for i in range(len(imor))] for j in range(len(imor[0]))]
-    im = array(im)
-    for i in range(len(imor)):
-        for j in range(len(imor)):
-            if imor[i][j][0] == 255 :
-                im[i][j] = 0
-            else :
-                im[i][j] = 1
-    return im
-
-
-
-
-
-
-def decoupage(nom_image):
-    grey = pngToGrey(nom_image)
-    im = greyToBin(grey)
-    # imshow(im)
-    # show()
+def decoupage(nom_image, grey = True):
+    im = cv2.imread(nom_image)
+    im = get_clean_grid(im)
+    imshow(im)
+    show()
+    if grey :
+        grey = pngToGrey(im)
+        im = greyToBin(grey)
     #on va découper la grille en 81 cases
     size = len(im)
-    cell_size = size//9 #in pixels
+    cell_size = size//9 #en pixels
     cells = []
-    # print("cell size", cell_size)
-    # print("image", im)
-    # print("image", len(im[0]))
     for row in range(9):
         for column in range(9):
-            cells.append(extract_cell(row, column, im, cell_size))
-    # for cell in cells :
-    #     imshow(cell)
-    #     show()
+            cells.append(extract_cell(row, column, im, cell_size, grey))
     return cells
 
-def extract_cell(row, column, image, cell_size):
+
+def extract_cell(row, column, image, cell_size, grey = True):
     left_boundary = row*cell_size
     right_boundary = (row+1)*cell_size
     up_boundary = column*cell_size
     down_boundary = (column+1)*cell_size
-    cell = array([[0 for i in range(cell_size)] for j in range(cell_size)])
+    if grey :
+        cell = array([[0 for i in range(cell_size)] for j in range(cell_size)])
+    else :
+        cell = array([[[float(0) for c in range(image.shape[2])]for i in range(cell_size)] for j in range(cell_size)])
     for i in range(left_boundary, right_boundary):
         for j in range(up_boundary, down_boundary):
             iprime = i-left_boundary    #les indices primes representent les indices de la cellule
-            jprime = j-up_boundary
-            cell[iprime][jprime] = image[i][j]
+            jprime = j-up_boundary      #les indices non primes representent les indices de l'image
+            if grey :
+                cell[iprime][jprime] = image[i][j]
+            else :
+                for c in range(image.shape[2]):
+                    cell[iprime][jprime][c] = image[i][j][c]
     return cell
+
 
 
 def extract_amas(cell):
@@ -206,6 +61,8 @@ def extract_amas(cell):
 
 
 def grossir_amas(cell, amas, carte):
+    # print(cell)
+    # print(cell.shape)
     amas_a_grossi = True 
     while amas_a_grossi :
         amas_a_grossi = False
@@ -249,19 +106,20 @@ def front_superieure(front, carte, cell):
     return nouvelle_front, carte
 
 
-
 def pixels_voisins(pixel):
     i, j = pixel
     return [(i+1, j), (i, j+1), (i-1, j), (i, j-1)]
 
+
 def amas_to_28pixels(amas):
+    print("amas", amas)
     #On centre d'abord le nombre extrait dans le premier 
     hauteur = max([pixel[0] for pixel in amas]) - min([pixel[0] for pixel in amas])
     largeur = max([pixel[1] for pixel in amas]) - min([pixel[1] for pixel in amas])
     espace_vide_gauche = min([pixel[0] for pixel in amas])
     espace_vide_haut = min([pixel[1] for pixel in amas])
     surplus = abs(hauteur-largeur)//2
-    border = int(max(hauteur, largeur)*0.2)
+    border = int(max(hauteur, largeur)*0.2) + 1  # le + 1 est pour dans le cas ou l'amas a une taille de 1 (rare mais pas impossible)
     if hauteur > largeur :
         number_size = hauteur  #la taille du nombre dans un carré
         decallage_horizontal = espace_vide_gauche - border//2
@@ -276,10 +134,14 @@ def amas_to_28pixels(amas):
         for j in range(cell_size):
             if (i + decallage_horizontal, j + decallage_vertical) in amas :
                 image[i][j] = 1
+    print("image", image)
     cv2_image = convert_bitmap_to_cv2(image)
+    print(cv2_image)
+    print(cv2_image.shape)
     cv2_resized_image = cv2.resize(cv2_image, (28,28))
     resized_image = convert_cv2_to_bitmap(cv2_resized_image)
     return resized_image
+
 
 def convert_bitmap_to_cv2(bitmap_image):
     cv2_image = zeros(list(bitmap_image.shape) + [3])
@@ -293,6 +155,7 @@ def convert_bitmap_to_cv2(bitmap_image):
                     cv2_image[i][j][c] = 255
     return cv2_image
 
+
 def convert_cv2_to_bitmap(cv2_image):
     bitmap_image = zeros(list(cv2_image.shape[:2]))
     for i in range(cv2_image.shape[0]):
@@ -304,45 +167,68 @@ def convert_cv2_to_bitmap(cv2_image):
     return bitmap_image
 
             
-def interpret(output):
-    maximum = max(output)
-    return list(output).index(maximum)
-
-def predict(image):
-    weights = np.load("my_network.npy", allow_pickle = True)
-    neural_network = NeuralNetwork([784,200,100,10], weights = weights, bias=True)
-    print(neural_network.run(image))
-    print(max(neural_network.run(image)))
-    return interpret(neural_network.run(image))
-
-# train_images, train_labels, test_images, test_labels = pre_processing()
-# weights = np.load("my_network.npy", allow_pickle = True)
-# neural_network = NeuralNetwork([784,200,100,10], weights = weights, bias=True)
-# neural_network.evaluate(test_images, test_labels)
-
-# for nom_image in ["un.bmp", "deux.bmp", "trois.bmp", "quatre.bmp", "cinq.bmp", "six.bmp", "sept.bmp", "huit.bmp", "neuf.bmp"]:
-#     image = bitmap_to_usable(nom_image)
-#     print(nom_image, interpret(neural_network.run(image)))
+def interpret(outputs):
+    results = []
+    for output in outputs :
+        maximum = max(output)
+        results.append(list(output).index(maximum))
+    return results
 
 
+def prediction(images):
+    images = images.reshape(images.shape[0], 28, 28, 1).astype('float32')
+    model = load_model('CNN')
+    outputs = model.predict(images)
+    return interpret(outputs)
 
-cells = decoupage("sudoku_moche.png")
-im = amas_to_28pixels(extract_amas(cells[0]))
-print(list(im))
-# for i in range(81):
-#     amas = extract_amas(cells[i])
-#     im = amas_to_28pixels(amas)
-#     print(predict(im))
-#     imshow(im)
-#     show()
+
+def picture_to_grid(nom_image):
+    cells = decoupage(nom_image)
+    cells_couleur = decoupage(nom_image, grey = False)
+    blank = []
+    images = []
+    for i in range(len(cells)):
+        amas = extract_amas(cells[i])
+        blank.append(detect_blank_cells(amas, cells_couleur[i]))
+        if not blank[i] :
+            images.append(amas_to_28pixels(amas))
+    results = prediction(array(images))
+    grid = array([[0 for i in range(9)] for j in range(9)])
+    count_blank = 0
+    count_all = 0   #cette variable numérote les cases pleines
+    for i in range(grid.shape[0]):
+        for j in range(grid.shape[1]):
+            if not blank[count_all] :
+                grid[i][j] = results[count_blank]
+                count_blank += 1
+            count_all += 1
+    return grid
+
+
+
+def detect_blank_cells(amas, cell_couleur):
+    # on fait la moyenne des couleurs des pixels de l'amas
+    somme = 0 
+    for pixel in amas :
+        i, j = pixel
+        for c in range(cell_couleur.shape[2]):
+            somme += cell_couleur[i][j][c]/3
+    moyenne_amas = somme/len(amas)
+    somme = 0 
+    for i in range(cell_couleur.shape[0]):
+        for j in range(cell_couleur.shape[1]):
+            for c in range(cell_couleur.shape[2]):
+                somme += cell_couleur[i][j][c]/3
+    moyenne_cell = somme/(cell_couleur.shape[0]*cell_couleur.shape[1])
+    #if case remplie
+    if moyenne_cell - 0.08  > moyenne_amas :    # On rajoute le -0.08 car parfois dans une case vide la couleur de l'amas est très légèrement inférieure à la couleur moyenne
+        return False
+    #if case vide
+    else :
+        return True
+
+
+
+print(picture_to_grid("sudoku_original.png"))
 
     
-
-
-# test = cv2.imread("sudoku_moche.png")
-# print(test)
-# resized_image = cv2.resize(test, (28,28))
-# print(type(resized_image))
-# print(len(resized_image))
-# print(len(resized_image[0]))
-# cv2.imshow("test", resized_image)

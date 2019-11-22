@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 
 P=1./50 #portion de l'image totale pour calculer la moyenne locale
 
-def pngToGrey (fichier) : #à partir du nom de fichier renvoie un tableau de nuance de gris
-    imgpil = Image.open(fichier)
-    img = np.array(imgpil)
+def pngToGrey (img) : #à partir du nom de fichier renvoie un tableau de nuance de gris
     t=[]
     for x in img :
         t.append ([])
