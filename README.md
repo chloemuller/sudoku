@@ -29,4 +29,7 @@ Carril Thomas.
 
 * interface permettant de lancer l'appareil photo et de prendre en photo le sudoku ou de la sélectionner dans l'explorateur de fichiers
 * interface permettant de modifier les chiffres scannés en cas d'erreur
-* option indice qui ne renvoie qu'un nouveau chiffre et pas toute la grille corrigée
+
+## éxecution du programme
+
+pour éxecuter le programme éxecuter le fichier interface.py
